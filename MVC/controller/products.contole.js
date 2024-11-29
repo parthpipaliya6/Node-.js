@@ -1,58 +1,65 @@
-const Product = require("../Model/Product.Schema")
+const Product = require("../models/product.model");
 
-const getProducts = async(req,res) =>{
-    try {
-        let product = await Product.find();
-        res.status(200).send(product);
-    } catch (error) {
-        console.log(error);
-    }
-}
+const createProduct = async (req, res) => {
+  console.log(req.file);
 
-const getProductId = async(req,res) =>{
-    try {
-        let {Productid} = req.params;
-        let product = await Product.findById(Productid);
-        res.status(200).send(product);
-    } catch (error) {
-        console.log(error);
-    }
-}
+  if (req.file) {
+    req.body.img = req.file.path;
+  }
 
-const postProduct = async(req,res) =>{
-    try {
-        let product = await Product.create(req.body);
-        res.status(201).send(product);
-    } catch (error) {
-        console.log(error);
-    }
-}
+  try {
+    let product = await Product.create(req.body);
+    res.status(201).send(product);
+  } catch (error) {
+    res.status(500).send({ err: error.message });
+  }
+};
 
-const patchProduct = async(req,res) =>{
-    try {
-        let {Productid} = req.params;
-        let product = await Product.findByIdAndUpdate(Productid, res.body, {new: true});
-        res.status(201).send(product);
-    } catch (error) {
-        console.log(error);
-    }
-}
+const getProducts = async (req, res) => {
+  try {
+    let products = await Product.find();
+    res.status(200).send(products);
+  } catch (error) {
+    res.status(500).send({ err: error.message });
+  }
+};
 
-const deleteProduct = async(req,res) =>{
-    try {
-        let {Productid} = req.params;
-        let product = await Product.findByIdAndUpdate(Productid);
-        res.status(201).send(product);
-    } catch (error) {
-        console.log(error);
-    }
-}
+const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    let product = await Product.findById(productId);
+    res.status(200).send(product);
+  } catch (error) {
+    res.status(500).send({ err: error.message });
+  }
+};
 
+const updateProduct = async (req, res) => {
+  let { productId } = req.params;
+  try {
+    let product = await Product.findByIdAndUpdate(productId, req.body, {
+      new: true,
+    });
+    res.status(200).send(product);
+  } catch (error) {
+    res.status(500).send({ err: error.message });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    let product = await Product.findByIdAndDelete(productId);
+    res.status(200).send(product);
+  } catch (error) {
+    res.status(500).send({ err: error.message });
+  }
+};
 
 module.exports = {
-    getProducts,
-    getProductId,
-    postProduct,
-    patchProduct,
-    deleteProduct,
-}
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+};

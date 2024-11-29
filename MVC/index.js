@@ -1,15 +1,19 @@
-const exports = require('express');
+const express = require("express");
+const dbConnection = require("./config/db");
+const productRoute = require("./routes/product.router");
+const path = require("path");
+require("dotenv").config();
 const app = express();
 app.use(express.json());
-require("dotenv").config();
-
-app.use("/products",ProductsRoute);
+app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static((__dirname,"+", "uploads")));
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the e-commerce API!");
+  res.sendFile((__dirname, "+","view/form.html"));
 });
-
-const PORT = process.env.PORT || 8090;
-app.listen(PORT, (req, res) => {
-    console.log(`Server is running on port ${PORT}`);
-})
+app.use("/products", productRoute);
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
+  dbConnection();
+});

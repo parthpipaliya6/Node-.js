@@ -1,12 +1,18 @@
-const Route = require('express');
-const { getProducts, getProductId, postProduct, patchProduct, deleteProduct } = require('../Controller/Products.Control');
+const { Router } = require("express");
+const {
+  getProducts,
+  getProductById,
+  createProduct,
+  deleteProduct,
+  updateProduct,
+} = require("../controllers/product.controller");
+const upload = require("../utils/imageupload");
 
-const ProductRoute = Route();
+const productRoute = Router();
+productRoute.get("/", getProducts);
+productRoute.get("/:productId", getProductById);
+productRoute.post("/", upload.single("img"), createProduct);
+productRoute.delete("/:productId", deleteProduct);
+productRoute.patch("/:productId", updateProduct);
 
-ProductRoute.get('/',getProducts);
-ProductRoute.get('/:Productid',getProductId);
-ProductRoute.post('/',postProduct);
-ProductRoute.patch('/:Productid',patchProduct);
-ProductRoute.delete('/:Productid',deleteProduct);
-
-module.exports = ProductRoute;
+module.exports = productRoute;
